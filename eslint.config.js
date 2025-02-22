@@ -1,10 +1,18 @@
+// filepath: /F:/MyApis/eslint.config.js
 import globals from "globals";
-import pluginJs from "@eslint/js";
+import js from "@eslint/js";
 
-
-/** @type {import('eslint').Linter.Config[]} */
 export default [
-  {files: ["**/*.js"], languageOptions: {sourceType: "script"}},
-  {languageOptions: { globals: globals.node }},
-  pluginJs.configs.recommended,
+  {
+    files: ["**/*.js"],
+    languageOptions: {
+      ecmaVersion: 2018,
+      sourceType: "module",
+      globals: globals.node,
+    },
+    rules: {
+      // Add your custom rules here
+    },
+  },
+  js.configs.recommended,
 ];
