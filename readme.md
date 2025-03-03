@@ -1,112 +1,66 @@
-```markdown
-# My APIs Documentation
+# Subscription API
 
-Welcome to the My APIs documentation. This interactive guide will help you understand how to use our APIs effectively.
+A robust subscription-based API built with **Node.js**, **Express**, and **Mongoose**, featuring JWT authentication with refresh tokens.
 
-## Table of Contents
-1. [Introduction](#introduction)
-2. [Getting Started](#getting-started)
-3. [API Endpoints](#api-endpoints)
-4. [Examples](#examples)
-5. [FAQ](#faq)
+## Features
 
-## Introduction
-Learn about the purpose and functionality of our APIs.
+- **User Authentication**: Secure login and signup with JWT-based authentication.
+- **Refresh Token Mechanism**: Implements refresh tokens for session management.
+- **Subscription Management**: Create, update, and manage user subscriptions.
+- **Database Integration**: Uses **MongoDB** with Mongoose ORM.
+- **RESTful API**: Clean and structured API endpoints.
 
-## Getting Started
-Follow these steps to get started with our APIs:
-1. **Sign Up**: Create an account on our platform.
-2. **API Key**: Obtain your API key from the dashboard.
-3. **Documentation**: Read through the API documentation.
+## Tech Stack
+
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB, Mongoose
+- **Authentication**: JWT (Access & Refresh Tokens)
+
+## Installation
+
+1. **Clone the repository**  
+   ```sh
+   git clone https://github.com/cpojha/Subscription-API.git
+   cd Subscription-API
+   ```
+
+2. **Install dependencies**  
+   ```sh
+   npm install
+   ```
+
+3. **Setup environment variables**  
+   Create a `.env` file and add the following:
+   ```
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_secret_key
+   REFRESH_SECRET=your_refresh_token_secret
+   ```
+
+4. **Start the server**  
+   ```sh
+   npm start
+   ```
+   The API will be available at `http://localhost:5000`.
 
 ## API Endpoints
-Explore the various API endpoints available:
 
-### GET /api/v1/resource
-Fetch a list of resources.
+| Method | Endpoint           | Description                |
+|--------|-------------------|----------------------------|
+| POST   | `/api/auth/signup`  | Register a new user        |
+| POST   | `/api/auth/login`   | Authenticate user          |
+| POST   | `/api/auth/refresh` | Generate new access token  |
+| GET    | `/api/subscription` | Get user subscription info |
+| POST   | `/api/subscription` | Create a subscription      |
 
-**Request:**
-```http
-GET /api/v1/resource HTTP/1.1
-Host: api.example.com
-Authorization: Bearer YOUR_API_KEY
-```
+## Contributing
 
-**Response:**
-```json
-{
-    "data": [
-        {
-            "id": 1,
-            "name": "Resource 1"
-        },
-        {
-            "id": 2,
-            "name": "Resource 2"
-        }
-    ]
-}
-```
+Feel free to fork this repository and submit pull requests for improvements.
 
-### POST /api/v1/resource
-Create a new resource.
+## License
 
-**Request:**
-```http
-POST /api/v1/resource HTTP/1.1
-Host: api.example.com
-Authorization: Bearer YOUR_API_KEY
-Content-Type: application/json
+This project is licensed under the MIT License.
 
-{
-    "name": "New Resource"
-}
-```
+---
 
-**Response:**
-```json
-{
-    "id": 3,
-    "name": "New Resource"
-}
-```
-
-## Examples
-Here are some examples of how to use our APIs:
-
-### Fetch Resources
-```javascript
-fetch('https://api.example.com/api/v1/resource', {
-    method: 'GET',
-    headers: {
-        'Authorization': 'Bearer YOUR_API_KEY'
-    }
-})
-.then(response => response.json())
-.then(data => console.log(data));
-```
-
-### Create Resource
-```javascript
-fetch('https://api.example.com/api/v1/resource', {
-    method: 'POST',
-    headers: {
-        'Authorization': 'Bearer YOUR_API_KEY',
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ name: 'New Resource' })
-})
-.then(response => response.json())
-.then(data => console.log(data));
-```
-
-## FAQ
-**Q: How do I get an API key?**
-A: Sign up on our platform and navigate to the dashboard to obtain your API key.
-
-**Q: What is the rate limit for the API?**
-A: The rate limit is 1000 requests per hour.
-
-For more information, visit our [official documentation](https://api.example.com/docs).
-
-```
+Let me know if you need any modifications! 🚀
