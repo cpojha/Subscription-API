@@ -30,7 +30,7 @@ A robust subscription-based API built with **Node.js**, **Express**, and **Mongo
    ```
 
 3. **Setup environment variables**  
-   Create a `.env` file and add the following:
+   Create a `.env.devlopment` file and add the following:
    ```
    MONGO_URI=your_mongodb_connection_string
    JWT_SECRET=your_secret_key
@@ -63,4 +63,4 @@ This project is licensed under the MIT License.
 
 ---
 
-Let me know if you need any modifications! 🚀
+Made by [Chandra Prakash Ojha](https://github.com/cpojha/)
