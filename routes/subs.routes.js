@@ -32,4 +32,4 @@ subsRouter.get('/:id/cancel',(req,res)=>{
 subsRouter.get('/upcoming-renewals',(req,res)=>{
     res.send({title: 'GET upcoming renewals'});
 });
-export default subsRouter;  
+export default subsRouter;

@@ -3,50 +3,96 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import user from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '../config/env.js';  // JWT_SECRET is defined in env.js
-import { JWT_EXPIRES_IN } from '../config/env.js'; // JWT_EXPIRES_IN is defined in env.js               
+import dotenv from 'dotenv';
 
-export const signUp = async (req, res,next) => {
+dotenv.config({ path: ".env.development.local" });
 
-const session = await mongoose.startSession();
-session.startTransaction();
-try {
-    // logic goes here
-    // to create new user
-    const {name,email,password} = req.body;
-    //if user already exists
-    const existingUser = await user.findOne({email});
-    if(existingUser){
-        const error = new Error('User already exists');
-        error.statusCode = 409; // 409 is for conflict
-        throw error;
-    }
-// Hash the password
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
 
-const salt = await bcrypt.genSalt(10);
-const hashedPassword = await bcrypt.hash(password, salt);
+export const signUp = async (req, res, next) => {
+    try {
+        const { name, email, password } = req.body;
 
-const newUsers = await user.create([{name,email,password:hashedPassword}],{session:session});
-// Generate JWT token
-const token = jwt.sign({userId: newUsers[0]._id}, JWT_SECRET, {expiresIn: JWT_EXPIRES_IN});
-    await session.commitTransaction();
-    session.endSession();
-    res.status(201).json({
-        message: 'User created successfully', 
-        success: true,
-        data: {
-            token,
-            user: newUsers[0]
+        // Check if user already exists
+        const existingUser = await user.findOne({ email });
+        if (existingUser) {
+            const error = new Error('User already exists');
+            error.statusCode = 409; // 409 is for conflict
+            throw error;
         }
-        
-    });
-} catch (error) {
-    await session.abortTransaction();
-    session.endSession();
-    next(error);
-}
-}
 
-export const signIn = async (req, res,next) => {}
+        // Hash the password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
-export const signOut = async (req, res,next) => {}
+        // Create new user
+        const newUser = new user({ name, email, password: hashedPassword });
+        await newUser.save();
+
+        // Generate JWT token
+        const token = jwt.sign({ userId: newUser._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+
+        res.status(201).json({
+            message: 'User created successfully',
+            success: true,
+            data: {
+                token,
+                user: newUser
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const signIn = async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
+
+        // Check if user exists
+        const existingUser = await user.findOne({ email });
+        if (!existingUser) {
+            const error = new Error('Invalid credentials');
+            error.statusCode = 401; // 401 is for unauthorized
+            throw error;
+        }
+
+        // Check if password is correct
+        const isPasswordValid = await bcrypt.compare(password, existingUser.password);
+        if (!isPasswordValid) {
+            const error = new Error('Invalid credentials');
+            error.statusCode = 401; // 401 is for unauthorized
+            throw error;
+        }
+
+        // Generate JWT token
+        const token = jwt.sign({ userId: existingUser._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+
+        res.status(200).json({
+            message: 'User logged in successfully',
+            success: true,
+            data: {
+                token,
+                user: existingUser
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const signOut = async (req, res, next) => {
+
+    try {
+        res.clearCookie('token');
+        res.status(200).json({
+            message: 'User logged out successfully',
+            success: true,
+            data: {}
+        });
+    } catch (error) {
+        next(error);
+    }
+
+};
