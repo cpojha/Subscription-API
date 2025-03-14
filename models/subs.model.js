@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 // eslint-disable-next-line no-unused-vars
 import validator from 'validator';
-const subsSchema = new mongoose.Schema({
+const subscriptionSchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, 'Please enter your name'],
@@ -70,7 +70,7 @@ const subsSchema = new mongoose.Schema({
 // auto calculate renewal date
 
 // eslint-disable-next-line no-unused-vars
-subsSchema.pre('save', function (next) {
+subscriptionSchema.pre('save', function (next) {
     if(!this.renewalDate){
         const renewalPeriod = {
             daily: 1,
@@ -78,7 +78,7 @@ subsSchema.pre('save', function (next) {
             monthly: 30,
             yearly: 365
         };
-    this.renewalDate= new Date(this.startDate);
+ //   this.renewalDate= new Date(this.startDate);
         this.renewalDate = new Date(this.startDate.getTime() + renewalPeriod[this.frequency]*24*60*60*1000);
     }
 // Auto update the status if renewal date is passed
@@ -88,4 +88,6 @@ subsSchema.pre('save', function (next) {
 
 });
 
-export default mongoose.models.Subs || mongoose.model('Subs', subsSchema);
+const Subscription = mongoose.model('Subscription', subscriptionSchema);
+
+export default Subscription;

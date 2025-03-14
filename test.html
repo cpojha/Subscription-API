@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test API</title>
+</head>
+<body>
+  <script>
+    async function createSubscription() {
+      const response = await fetch('http://localhost:3000/api/v1/subscriptions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2QyZTg2ZTgxZGNjNmI5YjJhZmFhNzgiLCJpYXQiOjE3NDE4NzUzMTAsImV4cCI6MTc0MTk2MTcxMH0.A3tDhR7LMvJxLpkHLybc22RK1bQSvPwqUK_oWrUAcZE'
+        },
+        body: JSON.stringify({
+          name: "Javascript Mastery Elite Membership",
+          price: 139.00,
+          currency: "USD",
+          frequency: "monthly",
+          category: "entertainment",
+          startDate: "2025-01-20T00:00:00.000Z",
+          paymentMethod: "upi"
+        })
+      });
+
+      const data = await response.json();
+      console.log(data);
+    }
+
+    createSubscription();
+  </script>
+</body>
+</html>
