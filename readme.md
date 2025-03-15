@@ -219,7 +219,8 @@ pm2 logs subscription-api
 <details>
   <summary>Environment Variables (.env)</summary>
 
-```plaintext
+```log
+
 PORT=3000
 SERVER_URL="http://localhost:3000"
 #kiji
@@ -227,7 +228,7 @@ NODE_ENV='development'
 
 DB_URI=""
 
-JWT_SECRET="sec"
+JWT_SECRET=""
 JWT_EXPIRES_IN="7d"
 
 ARCJET_KEY=""
@@ -248,6 +249,8 @@ EMAIL_PASSWORD=""
 
 ```
 </details>
+
+
 ---
 
 # **📜 License**  
