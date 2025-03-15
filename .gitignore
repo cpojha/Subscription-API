@@ -64,3 +64,6 @@ typings/
 .env.test.local
 .env.production.local
 .env.*.local
+
+
+apicall.md

@@ -18,6 +18,15 @@ const errorMiddleware = (error, req, res, next) => {
             const message = Object.values(error.errors).map(value => value.message);
             err = new Error(message.join(','), 400);
         }
+
+// mongoose connection err
+
+        if (error.name === 'MongoNetworkError') {
+            const message = 'MongoDB connection error';
+            err = new Error(message, 500);
+        }
+        
+
         res.status(err.statusCode || 500).json({
             success: false,
             error: err.message || 'Server Error'

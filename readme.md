@@ -216,6 +216,39 @@ pm2 logs subscription-api
 🔹 **Mobile App API Integration** for native applications  
 
 ---
+<details>
+  <summary>Environment Variables (.env)</summary>
+
+```plaintext
+PORT=3000
+SERVER_URL="http://localhost:3000"
+#kiji
+NODE_ENV='development'
+
+DB_URI=""
+
+JWT_SECRET="sec"
+JWT_EXPIRES_IN="7d"
+
+ARCJET_KEY=""
+ARCJET_ENV="Development"
+
+
+#upstash
+
+QSTASH_URL=
+QSTASH_TOKEN=""
+QSTASH_CURRENT_SIGNING_KEY=""
+QSTASH_NEXT_SIGNING_KEY=""
+
+
+#nodemailer
+
+EMAIL_PASSWORD=""
+
+```
+</details>
+---
 
 # **📜 License**  
 This project is licensed under the **MIT License**.  
