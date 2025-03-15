@@ -4,6 +4,8 @@ import { workflowClient } from '../config/upstash.js';
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.development.local' });
 const SERVER_URL = process.env.SERVER_URL;
+import { redisClient } from '../config/redis.js';
+
 
 // Complete implementation of calculateRenewalDate
 const calculateRenewalDate = (startDate, frequency) => {
@@ -78,6 +80,10 @@ export const createSubscription = async (req, res, next) => {
       if (result.insertedId) {
         const subscription = { _id: result.insertedId, ...subscriptionData };
         console.log('subscription created:', subscription); // Debugging statement
+        await redisClient.del(`subscriptions:${req.user.userId}`);
+
+
+
         
         try {
           console.log('Triggering workflow...'); // Debugging statement
@@ -114,6 +120,7 @@ export const createSubscription = async (req, res, next) => {
     console.error('Error occurred:', e); // Debugging statement
     next(e);
   }
+
 };
 
 export const getUserSubscriptions = async (req, res, next) => {
@@ -131,4 +138,46 @@ export const getUserSubscriptions = async (req, res, next) => {
   } catch (e) {
     next(e);
   }
+
+  try {
+    const userId = req.params.id;
+    
+    // Check if user is authorized
+    if (req.user.userId !== userId) {
+      const error = new Error('You are not the owner of this account');
+      error.status = 401;
+      throw error;
+    }
+    
+    // Try to get from cache first
+    const cacheKey = `subscriptions:${userId}`;
+    const cachedData = await redisClient.get(cacheKey);
+    
+    if (cachedData) {
+      console.log('Cache hit for user subscriptions');
+      return res.status(200).json({ 
+        success: true, 
+        data: JSON.parse(cachedData),
+        source: 'cache'
+      });
+    }
+     // If not in cache, get from DB
+     console.log('Cache miss for user subscriptions');
+     const subscriptions = await Subscription.find({ user: userId });
+     
+     // Save to cache with 30 minute expiry
+     await redisClient.setEx(
+       cacheKey, 
+       1800, 
+       JSON.stringify(subscriptions)
+     );
+     
+     res.status(200).json({ 
+       success: true, 
+       data: subscriptions,
+       source: 'database'
+     });
+   } catch (e) {
+     next(e);
+   }
 };

@@ -8,6 +8,8 @@ import subscriptionRouter from "./routes/subs.routes.js";
 import cookieParser from "cookie-parser";
 import arcjetMiddleware from "./middleware/arcjet.middleware.js";
 import workflowRouter from   "./routes/workflow.routes.js";
+import { connectRedis } from "./config/redis.js";
+import { apiRateLimiter } from './middleware/rate-limit.middleware.js';
 
 dotenv.config({ path: ".env.development.local" });
 
@@ -16,6 +18,7 @@ const PORT = process.env.PORT || 3000;
 
 const app = express();
 
+app.use('/api', apiRateLimiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -37,6 +40,8 @@ app.listen(PORT, async () => {
 
   await connectToDatabase();
   console.log('Connected to MongoDB');
+  await connectRedis();
+  console.log('Connected to Redis');
 });
 
 export default app;

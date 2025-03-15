@@ -4,6 +4,8 @@ import bcrypt from 'bcrypt';
 import User from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { redisClient } from '../config/redis.js';
+
 
 dotenv.config({ path: ".env.development.local" });
 
@@ -85,7 +87,7 @@ export const signIn = async (req, res, next) => {
     }
 };
 
-export const signOut = async (req, res, next) => {
+export const signOut = async (req, res, next) => { // will be deprecated
     try {
         res.clearCookie('token');
         res.status(200).json({
@@ -97,3 +99,25 @@ export const signOut = async (req, res, next) => {
         next(error);
     }
 };
+
+export const logout = async (req, res, next) => {
+    try {
+      const token = req.header('Authorization').replace('Bearer ', '');
+      
+      // Get token payload without verification
+      const decoded = jwt.decode(token);
+      const expiryTimeInSeconds = decoded.exp - Math.floor(Date.now() / 1000);
+      
+      if (expiryTimeInSeconds > 0) {
+        // Add token to blacklist until its expiration
+        await redisClient.setEx(`blacklist:${token}`, expiryTimeInSeconds, '1');
+      }
+      
+      res.status(200).json({
+        success: true,
+        message: 'Successfully logged out'
+      });
+    } catch (e) {
+      next(e);
+    }
+  };
